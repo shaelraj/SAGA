@@ -14,6 +14,10 @@ import org.springframework.beans.BeanUtils;
 
 import com.javamonk.estore.commands.CreateProductCommand;
 import com.javamonk.estore.events.ProductCreatedEvent;
+import com.javamonks.estore.core.commands.CancelProductReservationCommand;
+import com.javamonks.estore.core.commands.ReserverProductCommand;
+import com.javamonks.estore.core.events.ProductReservationCancelEvent;
+import com.javamonks.estore.core.events.ProductReservedEvent;
 
 /**
  * @author shaelraj
@@ -53,6 +57,45 @@ public class ProductAggregate {
 		this.productId= event.getProductId();
 		this.quantity= event.getQuantity();
 		this.title= event.getTitle();
+	}
+	
+	@CommandHandler
+	public ProductAggregate(ReserverProductCommand command) {
+		// Here axon framework replay the event and 
+		// create the aggregate so  we don't need to fetch quantity.
+		if(quantity < command.getQuantity()) {
+			throw new IllegalArgumentException("Insuffiecient no. of items in stocks");
+		}
+		
+		ProductReservedEvent event = ProductReservedEvent.builder()
+				.userId(command.getUserId())
+				.productId(command.getProductId())
+				.quantity(command.getQuantity())
+				.orderId(command.getOrderId())
+				.build();
+		AggregateLifecycle.apply(event);
+	}
+	
+	
+	@EventSourcingHandler
+	public void on(ProductReservedEvent event) {
+		this.quantity -= event.getQuantity();
+	}
+	
+	@CommandHandler
+	public ProductAggregate(CancelProductReservationCommand command) {
+		ProductReservationCancelEvent event = ProductReservationCancelEvent.builder()
+				.userId(command.getUserId())
+				.productId(command.getProductId())
+				.quantity(command.getQuantity())
+				.orderId(command.getOrderId())
+				.build();
+		AggregateLifecycle.apply(event);
+	}
+	
+	@EventSourcingHandler
+	public void on(ProductReservationCancelEvent event) {
+		this.quantity += event.getQuantity();
 	}
 	
 

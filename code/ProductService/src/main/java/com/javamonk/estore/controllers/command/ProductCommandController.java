@@ -28,11 +28,11 @@ import com.javamonk.estore.models.CreateProductRestModel;
 @RestController
 @RequestMapping(value = "/api/v1/products")
 public class ProductCommandController {
-	
+
 	private Environment env;
-	
-	private CommandGateway commandGateway;	
-	
+
+	private CommandGateway commandGateway;
+
 	@Autowired
 	public ProductCommandController(Environment env, CommandGateway commandGateway) {
 		this.env = env;
@@ -45,29 +45,17 @@ public class ProductCommandController {
 				.price(model.getPrice())
 				.quantity(model.getQuantity())
 				.title(model.getTitle())
-				.productId(UUID.randomUUID().toString())
-				.build();
-		try {
-		String returnValue = commandGateway.sendAndWait(createCommand);
-		return returnValue;
-		} catch(Exception e) {
-			return e.getLocalizedMessage();
-		}
+				.productId(UUID.randomUUID().toString()).build();
+		/* try { */
+		return commandGateway.sendAndWait(createCommand);
+		/*
+		 * } catch(Exception e) { return e.getLocalizedMessage(); }
+		 */
 	}
-	
+
 	@GetMapping("/getProduct")
 	public String getProduct() {
 		return "HTTP GET handled" + env.getProperty("local.server.port");
-	}
-	
-	@PutMapping("/update")
-	public String updateProduct() {
-		return "HTTP PUT handled";
-	}
-	
-	@DeleteMapping("/delete")
-	public String deleteProduct() {
-		return "HTTP Delete handled";
 	}
 
 }
