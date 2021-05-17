@@ -28,6 +28,7 @@ public class ProductAggregate {
 	
 	@AggregateIdentifier
 	private  String productId; 
+	
 	private  String title;
 
 	private  BigDecimal price;
@@ -63,7 +64,7 @@ public class ProductAggregate {
 	public ProductAggregate(ReserverProductCommand command) {
 		// Here axon framework replay the event and 
 		// create the aggregate so  we don't need to fetch quantity.
-		if(quantity < command.getQuantity()) {
+		if(this.quantity < command.getQuantity()) {
 			throw new IllegalArgumentException("Insuffiecient no. of items in stocks");
 		}
 		

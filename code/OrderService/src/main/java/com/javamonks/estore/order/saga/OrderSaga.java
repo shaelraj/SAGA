@@ -32,6 +32,7 @@ import com.javamonks.estore.order.command.ApproveOrderCommand;
 import com.javamonks.estore.order.command.RejectOrderCommand;
 import com.javamonks.estore.order.core.events.OrderApprovedEvent;
 import com.javamonks.estore.order.core.events.OrderCreatedEvent;
+import com.javamonks.estore.order.core.events.OrderRejectedEvent;
 
 /**
  * @author shaelraj
@@ -62,6 +63,8 @@ public class OrderSaga {
 					CommandResultMessage<? extends Object> commandResultMessage) {
 				if (commandResultMessage.isExceptional()) {
 					// start a compensation transaction
+					RejectOrderCommand rejectOrderCommand = new RejectOrderCommand(event.getOrderId(), "ReserveProductCommand failed.");
+					commandGateway.send(rejectOrderCommand);
 				}
 
 			}
@@ -126,6 +129,12 @@ public class OrderSaga {
 	public void handle(OrderApprovedEvent event) {
 		LOG.info("Order is approved for orderId: {}",event.getOrderId());
 //		SagaLifecycle.end();
+	}
+	
+	@EndSaga
+	@SagaEventHandler(associationProperty = "orderId")
+	public void handle(OrderRejectedEvent event) {
+		LOG.info("Order is rejected for orderId: {}",event.getOrderId());
 	}
 	
 private void cancelProductReservation(ProductReservedEvent productReservedEvent, String reason) {
