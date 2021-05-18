@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class ProductReservationCancelEvent {
+public class ProductReservationCancelledEvent {
 	private final String productId;
 	private final String orderId;
 	private final String userId;

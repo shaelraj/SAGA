@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.eventhandling.ResetHandler;
 import org.axonframework.messaging.interceptors.ExceptionHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.javamonk.estore.entity.ProductEntity;
 import com.javamonk.estore.events.ProductCreatedEvent;
 import com.javamonk.estore.repositries.ProductRepositry;
-import com.javamonks.estore.core.events.ProductReservationCancelEvent;
+import com.javamonks.estore.core.events.ProductReservationCancelledEvent;
 import com.javamonks.estore.core.events.ProductReservedEvent;
 
 /**
@@ -62,11 +63,16 @@ public class ProductEventsHandler {
 	}
 	
 	@EventHandler
-	public void on(ProductReservationCancelEvent event) {
+	public void on(ProductReservationCancelledEvent event) {
 		Optional<ProductEntity> optional = repo.getProductByProductId(event.getProductId());
 		optional.ifPresent(entity -> {
 			entity.setQuantity(entity.getQuantity() + event.getQuantity());
 			repo.save(entity);
 		});
+	}
+	
+	@ResetHandler
+	public void reset() {
+		repo.deleteAll();
 	}
 }

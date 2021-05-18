@@ -41,8 +41,8 @@ public class PaymentAggregate {
     		throw new IllegalArgumentException("Missing paymentId");
     	}
 	
-        AggregateLifecycle.apply(new PaymentProcessedEvent(processPaymentCommand.getOrderId(), 
-                processPaymentCommand.getPaymentId()));
+        AggregateLifecycle.apply(new PaymentProcessedEvent(processPaymentCommand.getPaymentId(), 
+                processPaymentCommand.getOrderId()));
     }
 
     @EventSourcingHandler

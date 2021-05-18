@@ -5,7 +5,7 @@ package com.javamonk.estore.command.handlers;
 
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
-import org.springframework.beans.BeanUtils;
+import org.axonframework.eventhandling.ResetHandler;
 import org.springframework.stereotype.Component;
 
 import com.javamonk.estore.entity.ProductLookupEntity;
@@ -35,5 +35,10 @@ public class ProductLookupEventsHandler {
 		ProductLookupEntity entity = new ProductLookupEntity(event.getProductId(), event.getTitle());
 		repo.save(entity);
 	} 
+	
+	@ResetHandler
+	public void reset() {
+		repo.deleteAll();
+	}
 
 }

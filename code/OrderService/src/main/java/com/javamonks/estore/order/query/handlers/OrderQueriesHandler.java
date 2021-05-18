@@ -20,7 +20,7 @@ import com.javamonks.estore.order.query.dto.FindOrderQuery;
 @Component
 public class OrderQueriesHandler {
 
-	OrdersRepository ordersRepository;
+	private OrdersRepository ordersRepository;
 
 	public OrderQueriesHandler(OrdersRepository ordersRepository) {
 		this.ordersRepository = ordersRepository;

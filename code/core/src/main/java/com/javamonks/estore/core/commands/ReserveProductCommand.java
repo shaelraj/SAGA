@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class ReserverProductCommand {
+public class ReserveProductCommand {
 
 	@TargetAggregateIdentifier
 	private final String productId;
